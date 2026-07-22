@@ -12,5 +12,19 @@
         ]
       }
     ]
+  },
+  {
+    "name": "/deposit command shows deposit address",
+    "steps": [
+      {
+        "send": { "text": "/deposit" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {}
+          }
+        ]
+      }
+    ]
   }
 ]

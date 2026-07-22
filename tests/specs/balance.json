@@ -14,5 +14,21 @@
         ]
       }
     ]
+  },
+  {
+    "name": "/balance command shows zero balance for new user",
+    "steps": [
+      {
+        "send": { "text": "/balance" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "💰 Your balance: 0 SOL\n\nNo funds yet — tap 💳 Deposit to add SOL."
+            }
+          }
+        ]
+      }
+    ]
   }
 ]

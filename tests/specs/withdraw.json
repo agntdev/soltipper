@@ -14,5 +14,21 @@
         ]
       }
     ]
+  },
+  {
+    "name": "/withdraw command with no balance shows empty message",
+    "steps": [
+      {
+        "send": { "text": "/withdraw" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "📤 Withdraw SOL\n\nNo funds to withdraw. Tap 💳 Deposit to add SOL first."
+            }
+          }
+        ]
+      }
+    ]
   }
 ]

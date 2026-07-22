@@ -9,36 +9,52 @@ const composer = new Composer<Ctx>();
 
 const backToMenu = inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]);
 
-composer.callbackQuery("withdraw:show", async (ctx) => {
-  await ctx.answerCallbackQuery();
+async function handleWithdrawStart(ctx: Ctx): Promise<void> {
   const store = getDataStore();
   const user = await store.users.get(ctx.from?.id ?? 0);
   const balance = user?.balance ?? 0;
 
   if (balance <= 0) {
-    await ctx.editMessageText(
-      "📤 Withdraw SOL\n\nNo funds to withdraw. Tap 💳 Deposit to add SOL first.",
-      { reply_markup: backToMenu },
-    );
+    const text = "📤 Withdraw SOL\n\nNo funds to withdraw. Tap 💳 Deposit to add SOL first.";
+    if ("callback_query" in (ctx.update ?? {})) {
+      await ctx.editMessageText(text, { reply_markup: backToMenu });
+    } else {
+      await ctx.reply(text, { reply_markup: backToMenu });
+    }
     return;
   }
 
   if (!user?.solana_address) {
-    await ctx.editMessageText(
-      "📤 Withdraw SOL\n\nYou need to set a withdrawal address first.\nTap 💳 Deposit to generate your Solana address, then come back.",
-      { reply_markup: backToMenu },
-    );
+    const text = "📤 Withdraw SOL\n\nYou need to set a withdrawal address first.\nTap 💳 Deposit to generate your Solana address, then come back.";
+    if ("callback_query" in (ctx.update ?? {})) {
+      await ctx.editMessageText(text, { reply_markup: backToMenu });
+    } else {
+      await ctx.reply(text, { reply_markup: backToMenu });
+    }
     return;
   }
 
   ctx.session.step = "withdraw_awaiting_amount";
   ctx.session.withdrawAddress = user.solana_address;
-  await ctx.editMessageText(
-    `📤 Withdraw SOL\n\nBalance: ${balance.toFixed(4)} SOL\nNetwork fee: ${NETWORK_FEE} SOL\nDestination: ${user.solana_address}\n\nHow much SOL do you want to withdraw?`,
-    {
+  const text = `📤 Withdraw SOL\n\nBalance: ${balance.toFixed(4)} SOL\nNetwork fee: ${NETWORK_FEE} SOL\nDestination: ${user.solana_address}\n\nHow much SOL do you want to withdraw?`;
+  if ("callback_query" in (ctx.update ?? {})) {
+    await ctx.editMessageText(text, {
       reply_markup: inlineKeyboard([[inlineButton("Cancel", "withdraw:cancel")]]),
-    },
-  );
+    });
+  } else {
+    await ctx.reply(text, {
+      reply_markup: inlineKeyboard([[inlineButton("Cancel", "withdraw:cancel")]]),
+    });
+  }
+}
+
+composer.command("withdraw", async (ctx) => {
+  await handleWithdrawStart(ctx);
+});
+
+composer.callbackQuery("withdraw:show", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await handleWithdrawStart(ctx);
 });
 
 composer.callbackQuery("withdraw:cancel", async (ctx) => {

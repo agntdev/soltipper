@@ -7,6 +7,19 @@ const composer = new Composer<Ctx>();
 
 const backToMenu = inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]);
 
+const BALANCE_ZERO = "💰 Your balance: 0 SOL\n\nNo funds yet — tap 💳 Deposit to add SOL.";
+
+composer.command("balance", async (ctx) => {
+  const store = getDataStore();
+  const user = await store.users.get(ctx.from?.id ?? 0);
+  const balance = user?.balance ?? 0;
+  const text =
+    balance > 0
+      ? `💰 Your balance: ${balance.toFixed(4)} SOL`
+      : BALANCE_ZERO;
+  await ctx.reply(text, { reply_markup: backToMenu });
+});
+
 composer.callbackQuery("balance:show", async (ctx) => {
   await ctx.answerCallbackQuery();
   const store = getDataStore();
@@ -15,7 +28,7 @@ composer.callbackQuery("balance:show", async (ctx) => {
   const text =
     balance > 0
       ? `💰 Your balance: ${balance.toFixed(4)} SOL`
-      : "💰 Your balance: 0 SOL\n\nNo funds yet — tap 💳 Deposit to add SOL.";
+      : BALANCE_ZERO;
   await ctx.editMessageText(text, { reply_markup: backToMenu });
 });
 
