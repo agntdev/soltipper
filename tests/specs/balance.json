@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/balance",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Check private SOL balance"
+            }
+          }
+        ],
+        "send": {
+          "text": "/balance"
+        }
+      }
+    ]
+  }
+]
