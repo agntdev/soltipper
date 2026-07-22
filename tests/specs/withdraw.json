@@ -1,19 +1,17 @@
 [
   {
-    "name": "/withdraw",
+    "name": "withdraw button with no balance shows empty message",
     "steps": [
       {
+        "send": { "callback": "withdraw:show" },
         "expect": [
           {
-            "method": "sendMessage",
+            "method": "editMessageText",
             "payload": {
-              "text": "Request SOL withdrawal to linked address"
+              "text": "📤 Withdraw SOL\n\nNo funds to withdraw. Tap 💳 Deposit to add SOL first."
             }
           }
-        ],
-        "send": {
-          "text": "/withdraw"
-        }
+        ]
       }
     ]
   }

@@ -1,19 +1,17 @@
 [
   {
-    "name": "/balance",
+    "name": "balance button shows zero balance for new user",
     "steps": [
       {
+        "send": { "callback": "balance:show" },
         "expect": [
           {
-            "method": "sendMessage",
+            "method": "editMessageText",
             "payload": {
-              "text": "Check private SOL balance"
+              "text": "💰 Your balance: 0 SOL\n\nNo funds yet — tap 💳 Deposit to add SOL."
             }
           }
-        ],
-        "send": {
-          "text": "/balance"
-        }
+        ]
       }
     ]
   }

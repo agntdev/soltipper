@@ -1,19 +1,17 @@
 [
   {
-    "name": "/tip",
+    "name": "tip button shows instructions",
     "steps": [
       {
+        "send": { "callback": "tip:start" },
         "expect": [
           {
-            "method": "sendMessage",
+            "method": "editMessageText",
             "payload": {
-              "text": "Initiate anonymous tip in group chat"
+              "text": "🎯 Anonymous Tipping\n\nTo tip someone in a group chat:\n1. Reply to their message with /tip <amount>\n   Example: /tip 0.5\n\nThe tip is anonymous — the recipient won't see who sent it."
             }
           }
-        ],
-        "send": {
-          "text": "/tip"
-        }
+        ]
       }
     ]
   }
