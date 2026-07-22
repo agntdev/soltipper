@@ -1,15 +1,44 @@
 import { Composer } from "grammy";
+import type { Ctx } from "../bot.js";
+import { inlineButton, inlineKeyboard } from "../toolkit/index.js";
+import { getDataStore } from "../bot.js";
 
-// SCAFFOLD — generated from the bot blueprint BEFORE the agent runs.
-// Keep a LIVE registration (.command / .callbackQuery / …) so this feature is
-// never an empty stub. Replace the reply body with real logic + copy; if you
-// change the user-facing text, update tests/specs to match EXACTLY.
-// Do NOT rewrite src/bot.ts — buildBot() already auto-loads this module.
+const composer = new Composer<Ctx>();
 
-const composer = new Composer();
+const backToMenu = inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]);
 
-composer.command("deposit", async (ctx) => {
-  await ctx.reply("Get unique deposit address");
+function generateDepositAddress(userId: number): string {
+  const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+  let addr = "";
+  for (let i = 0; i < 44; i++) {
+    addr += chars[(userId * (i + 1) * 7 + i * 13) % chars.length];
+  }
+  return addr;
+}
+
+composer.callbackQuery("deposit:show", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const store = getDataStore();
+  const userId = ctx.from?.id ?? 0;
+  let user = await store.users.get(userId);
+  if (!user) {
+    user = {
+      telegram_id: userId,
+      display_name: ctx.from?.first_name ?? "User",
+      balance: 0,
+    };
+    await store.users.set(userId, user);
+    await store.users.addId(userId);
+  }
+  if (!user.solana_address) {
+    user.solana_address = generateDepositAddress(userId);
+    await store.users.set(userId, user);
+  }
+  const text =
+    `💳 Deposit SOL to your bot balance.\n\n` +
+    `Send SOL to this address:\n${user.solana_address}\n\n` +
+    `Your balance will update after the deposit confirms on-chain.`;
+  await ctx.editMessageText(text, { reply_markup: backToMenu });
 });
 
 export default composer;

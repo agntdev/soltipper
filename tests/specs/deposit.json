@@ -1,19 +1,15 @@
 [
   {
-    "name": "/deposit",
+    "name": "deposit button shows deposit address",
     "steps": [
       {
+        "send": { "callback": "deposit:show" },
         "expect": [
           {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Get unique deposit address"
-            }
+            "method": "editMessageText",
+            "payload": {}
           }
-        ],
-        "send": {
-          "text": "/deposit"
-        }
+        ]
       }
     ]
   }

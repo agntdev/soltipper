@@ -1,19 +1,17 @@
 [
   {
-    "name": "Admin Panel",
+    "name": "Admin Panel shows dashboard",
     "steps": [
       {
+        "send": { "callback": "admin:dashboard" },
         "expect": [
           {
-            "method": "sendMessage",
+            "method": "editMessageText",
             "payload": {
-              "text": "View totals and pending withdrawals"
+              "text": "📊 Admin Dashboard\n\n👥 Users: 0\n💰 Total balance: 0.0000 SOL\n🎯 Tips processed: 0 (0.0000 SOL total)\n📤 Withdrawals: 0 completed, 0 pending"
             }
           }
-        ],
-        "send": {
-          "callback": "admin:dashboard"
-        }
+        ]
       }
     ]
   }

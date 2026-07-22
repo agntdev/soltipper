@@ -1,15 +1,22 @@
 import { Composer } from "grammy";
+import type { Ctx } from "../bot.js";
+import { inlineButton, inlineKeyboard } from "../toolkit/index.js";
+import { getDataStore } from "../bot.js";
 
-// SCAFFOLD — generated from the bot blueprint BEFORE the agent runs.
-// Keep a LIVE registration (.command / .callbackQuery / …) so this feature is
-// never an empty stub. Replace the reply body with real logic + copy; if you
-// change the user-facing text, update tests/specs to match EXACTLY.
-// Do NOT rewrite src/bot.ts — buildBot() already auto-loads this module.
+const composer = new Composer<Ctx>();
 
-const composer = new Composer();
+const backToMenu = inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]);
 
-composer.command("balance", async (ctx) => {
-  await ctx.reply("Check private SOL balance");
+composer.callbackQuery("balance:show", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const store = getDataStore();
+  const user = await store.users.get(ctx.from?.id ?? 0);
+  const balance = user?.balance ?? 0;
+  const text =
+    balance > 0
+      ? `💰 Your balance: ${balance.toFixed(4)} SOL`
+      : "💰 Your balance: 0 SOL\n\nNo funds yet — tap 💳 Deposit to add SOL.";
+  await ctx.editMessageText(text, { reply_markup: backToMenu });
 });
 
 export default composer;
