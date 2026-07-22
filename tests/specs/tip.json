@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/tip",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Initiate anonymous tip in group chat"
+            }
+          }
+        ],
+        "send": {
+          "text": "/tip"
+        }
+      }
+    ]
+  }
+]
