@@ -14,5 +14,21 @@
         ]
       }
     ]
+  },
+  {
+    "name": "/tip command in private chat shows group-only message",
+    "steps": [
+      {
+        "send": { "text": "/tip" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Tipping only works in group chats. Use /tip <amount> in a group, replying to someone's message."
+            }
+          }
+        ]
+      }
+    ]
   }
 ]
